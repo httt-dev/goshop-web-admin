@@ -2,7 +2,9 @@ import {
     toRefs,
     reactive
 } from "vue";
+
 import timewiseApi from "../network/config.js";
+
 import {
     validateEmail,
     validatePass
@@ -13,7 +15,7 @@ export const useUser = ()=> {
     const state = reactive ({
         errEmail : null,
         errPass : null,
-        signInResponse : null,
+        userListResponse : null,
     });
 
     const doSignIn = async(email , pass) => {
@@ -54,8 +56,25 @@ export const useUser = ()=> {
         }
     }
 
+    //get user list
+    const getUserList = async() => {
+        const response = await timewiseApi.get("/user/list").catch((e)=>{
+            if(e.response){
+                console.log(e.response.status);
+            }else{
+                console.log(e);
+            }
+            return null;
+        });
+        if(response){
+            state.userListResponse = response.data.data;
+        }
+    }
+
+    //export
     return {
         ...toRefs(state),
         doSignIn,
+        getUserList,
     };
 };
