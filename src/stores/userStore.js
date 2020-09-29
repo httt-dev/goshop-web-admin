@@ -3,7 +3,10 @@ import {
     reactive
 } from "vue";
 
-import timewiseApi from "../network/config.js";
+import {
+    timewiseApi,
+    timewiseAdminApi
+} from "../network/config.js";
 
 import {
     validateEmail,
@@ -21,7 +24,9 @@ export const useUser = ()=> {
     const doSignIn = async(email , pass) => {
         state.errEmail = null;
         state.errPass = null;
+        
         let hasError =false;
+
         if(!validateEmail(email)){
             state.errEmail ="Email không hợp lệ";
             hasError = true;
@@ -35,7 +40,7 @@ export const useUser = ()=> {
             console.log(state.errPass);
             return ;
         }
-        const response = await timewiseApi.post('/user/sign-in',{
+        const response = await timewiseAdminApi.post('/admin/sign-in',{
             email : email.trim(),
             password: pass.trim()
 
@@ -55,6 +60,11 @@ export const useUser = ()=> {
             return user;
         }
     }
+
+    const doLogout=()=>{
+        localStorage.setItem("token", null);
+        localStorage.setItem("user", null);
+    };
 
     //get user list
     const getUserList = async() => {
